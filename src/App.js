@@ -30,31 +30,38 @@ const handleClick = (value) => {
   setPage(value)
 }
 
-const getFavorite = () => {
-  let fav;
-  console.log(all)
-  all.forEach(question => {
-    let id = question.id
-    let rev = 0
-    console.log(question.question)
-    let questionText = question.question.toLowerCase()
-    let rev2 = 0
-    all.forEach(questionRem => {
-      let id2 = questionRem.id
-      let questionText2 = questionRem.question.toLowerCase()
-      if (id2 !== id) {
-        if (questionText === questionText2) {
-          return rev2 += 1
+const getFavorite = (arr) => {
+    let fav;
+    if (arr.length > 0) {
+      if (arr.length > 3) {
+        arr.forEach(question => {
+        let id = question.id
+        let rev = 0
+        let questionText = question.question.toLowerCase()
+        let rev2 = 0
+        arr.forEach(questionRem => {
+          let id2 = questionRem.id
+          let questionText2 = questionRem.question.toLowerCase()
+          if (id2 !== id) {
+            if (questionText === questionText2) {
+              return rev2 += 1
+            }
+          }
+        })
+    
+        if (rev2 > rev) {
+          fav = question.question;
         }
+        rev2 = 0;
+      })
+      console.log(fav)
+        
+      } else {
+        fav = arr[arr.length-1].question
       }
-    })
-
-    if (rev2 > rev) {
-      fav = question;
+    } else {
+      fav = undefined
     }
-    rev2 = 0;
-  })
-  console.log(fav)
   return fav;
 }
   return (
@@ -62,13 +69,13 @@ const getFavorite = () => {
       <h3>QuickQuestion</h3>
       <div>
       {page === 2 ? (
-              <QueryResponse data = {all[all.length - 1]}/>
+              <QueryResponse data = {all[all.length - 1]} type = "single"/>
       ) : 
        page === 3 ? (
         <QueryResponse data = {all} />
       ) : 
       page === 4 ? (
-        <QueryResponse data = {getFavorite()} />
+        <QueryResponse data = {getFavorite(all)} type="favorite" />
       ) :
       <Form handleSubmit = {handleSubmit}/> 
       }
@@ -82,28 +89,34 @@ const getFavorite = () => {
   );
 }
 
-const QueryResponse = ({data}) => {
+const QueryResponse = ({data }) => {
   return (
-    <div>
+    <div className="query-response-container">
         {
-          data ? (
-            data.length > 0 ? (
-              data.forEach(datum => {
-                  return (
-                    <div>
-                      <h4>{datum.question}</h4>
-                      <p>{datum.answer}</p>
-                    </div>
-                  )
-                })
-            ) : (
-              <div>
-                <h4>{data.question}</h4>
-                <p>{data.answer}</p>
+          data !== undefined && !Array.isArray(data) ? (
+            typeof data == "string" ? (
+              <div className="response-box" >
+                <h4>Favorite Question is:</h4>
+                <p>{data}</p>
+
             </div>
+            ) : (
+              <div className="response-box">
+                <h4>Question: {data.question}</h4>
+                <p>Answer: {data.answer}</p>
+              </div>
             )
+          ) : Array.isArray(data) && data.length > 0 ? (
+            <div className="container">
+            {data.map(question => (
+              <div className="response-box" key={question.id}>
+                <h4>Question: {question.question}</h4>
+                <p>Answer: {question.answer}</p>
+              </div>
+            ) )}
+          </div>
           ) : (
-              <div>
+              <div className="response-box">
                 <p>Nothing to display!</p>
               </div>
           )

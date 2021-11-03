@@ -35,13 +35,13 @@ function Form({handleSubmit}) {
                 option4: ""
             })
         } else {
-            console.log("Check all inputs.")
+            alert("Check all inputs.")
         }
     }
 
     return (
-        <form className = "form-container grid container"  onSubmit={submitStuff}>
-            <div className="grid">
+        <form className = "form-container container flex"  onSubmit={submitStuff}>
+            <div className="question-container flex">
                 <label>Question</label>
                 <textarea className="question-input" placeholder="Enter question" name="question" value={state.question} onChange={handleChange}></textarea>
             </div>
